@@ -1,6 +1,7 @@
 .DS_Store
 node_modules
-
+dist 
+# Must Remove dist to deploy
 
 # local env files
 .env
