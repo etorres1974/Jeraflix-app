@@ -1,6 +1,5 @@
 /*************
         SAMPLE URLS
-        
         1. To get the config data like image base urls
         https://api.themoviedb.org/3/configuration?api_key=<APIKEY>
          
@@ -26,13 +25,15 @@ const state = {
             secure_base_url: "https://image.tmdb.org/t/p/"
         }
     },
-    movies:[]
+    movies:[],
+    trending:[]
 }
-
+//state.API_CONFIG.images.base_url + / + state.API_CONFIG.images.poster_sizes
 //O mapGetter permite acessar esses getters ja salvos no Vuex
 const getters = {
     getAPI_CONFIG: (state) => state.API_CONFIG,
     getMovies: (state) => state.movies,
+    getTrending: (state) => state.trending
     
 }
 
@@ -74,12 +75,14 @@ const actions = {
             console.log(response);
           });
     },
-
-    async adicionarAnuncio({commit}, data){
-        const response = await axios.post("/anuncio", data.form, data.config)
-        commit("log", response)
-        return response.data
+    
+    // Trending movies in last 24h
+    async fetchTrendingMovies({commit}){
+        const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/trending/movie/day?api_key=${process.env.VUE_APP_API_KEY}`)
+        commit("log",response.data)
+        commit("setTrending", response.data)
     },
+
 }
 
 //Devem ser Síncronas, o primeiro parametro sempre é o state
@@ -87,6 +90,7 @@ const mutations = {
     log: (state, text) => console.log(text),
     setConfig: (state, config) => state.API_CONFIG = config,
     setMovies: (state, movies) => state.movies = movies,
+    setTrending: (state, trending) => state.trending = trending,
     pushMovies: (state, movies) => movies.forEach((movie) => state.movies.push(movie))
 }
 
