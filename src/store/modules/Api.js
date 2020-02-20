@@ -26,14 +26,16 @@ const state = {
         }
     },
     movies:[],
-    trending:[]
+    trending:[],
+    videoURL: ""
 }
 //state.API_CONFIG.images.base_url + / + state.API_CONFIG.images.poster_sizes
 //O mapGetter permite acessar esses getters ja salvos no Vuex
 const getters = {
     getAPI_CONFIG: (state) => state.API_CONFIG,
     getMovies: (state) => state.movies,
-    getTrending: (state) => state.trending
+    getTrending: (state) => state.trending,
+    getVideoURL: (state) => state.videoURL
     
 }
 
@@ -42,7 +44,7 @@ const actions = {
     // Busca informações necessárias para fazer requisições na API
     async fetchConfig({ commit }){
         const response = await axios.get(process.env.VUE_APP_API_BASE_URL + "/configuration?api_key=" + process.env.VUE_APP_API_KEY)
-        commit("log",response.data)
+        
         commit("setConfig", response.data)
     },
     // Busca somente a primeira página de uma busca de filmes por id usando axios
@@ -79,9 +81,18 @@ const actions = {
     // Trending movies in last 24h
     async fetchTrendingMovies({commit}){
         const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/trending/movie/day?api_key=${process.env.VUE_APP_API_KEY}`)
-        commit("log",response.data)
         commit("setTrending", response.data)
     },
+    async fetchVideoURL({commit}, id){
+        const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/movie/${id}/videos?api_key=${process.env.VUE_APP_API_KEY}`)
+        if(response.data.results[0].site == "YouTube"){
+            commit("log",`https://www.youtube.com/embed/${response.data.results[0].key}`)
+            commit("setVideoURL", `https://www.youtube.com/embed/${response.data.results[0].key}`)
+        }else{
+            commit("log",response.data.results[0].site)
+        }
+    },
+
 
 }
 
@@ -91,6 +102,7 @@ const mutations = {
     setConfig: (state, config) => state.API_CONFIG = config,
     setMovies: (state, movies) => state.movies = movies,
     setTrending: (state, trending) => state.trending = trending,
+    setVideoURL: (state, videoURL) => state.videoURL = videoURL,
     pushMovies: (state, movies) => movies.forEach((movie) => state.movies.push(movie))
 }
 

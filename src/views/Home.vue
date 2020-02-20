@@ -1,8 +1,11 @@
 <template>
   <div class="home">
+    
+
+
     <v-row>
       <v-col :cols="dinamycCols" v-for="movie in trending" :key="movie.id">
-        <v-card  >
+        <v-card>
           <v-card-title>
             {{movie.title}}
             <v-spacer></v-spacer>
@@ -10,7 +13,7 @@
               <v-icon>mdi-heart</v-icon>
             </v-btn>
           </v-card-title>
-          <v-img max-height="500" @click.stop="dialogCreate(movie)" :src="movie.imgURL"></v-img>
+          <v-img max-height="500" @click="createDialog(movie)" :src="movie.imgURL"></v-img>
         </v-card>
       </v-col>
     </v-row>
@@ -24,9 +27,15 @@
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-card-title>
+        <v-card-subtitle>
+          {{dialogMovie.overview}}
+        </v-card-subtitle>
+        <v-card-text align="center">
+          <iframe allowfullscreen :src="VideoUrl" frameborder="0"  width="300" height="300"></iframe>
 
-        <v-card-text>{{dialogMovie.overview}}</v-card-text>
-
+        </v-card-text>
+        
+        
         <v-card-actions>
           <v-btn text color="grey" @click="log(movie)">
             <v-icon>mdi-heart</v-icon>Adicionar aos favoritos
@@ -57,25 +66,31 @@ export default {
     ...mapActions(["fetchTrendingMovies"]),
     ...mapGetters(["getTrending"]),
 
+    ...mapActions(["fetchVideoURL"]),
+    ...mapGetters(["getVideoURL"]),
+
     getPosterURL(index, path) {
       //Index é pra escolher um valor dentro do array posterSize com os tamanhos disponíveis
       return `${this.API_CONFIG.images.secure_base_url}${this.API_CONFIG.images.poster_sizes[index]}${path}`;
     },
 
     createTrending() {
-      this.getTrending().results.forEach(result => {
+      this.getTrending().results.forEach(result =>{
         this.trending.push({
           id: result.id,
           title: result.title,
           overview: result.overview,
-          imgURL: this.getPosterURL(4, result.poster_path)
+          imgURL: this.getPosterURL(4, result.poster_path),
         });
       });
     },
-    dialogCreate(movie) {
-      this.dialogMovie = movie;
+
+    async createDialog(movie) {
+      await this.fetchVideoURL(movie.id)
+      this.dialogMovie = movie;  
       this.dialog = true;
     },
+
     log(e) {
       console.log(e);
     }
@@ -86,19 +101,27 @@ export default {
     await this.createTrending();
   },
   computed: {
+    VideoUrl(){
+        return this.getVideoURL()
+    },
     API_CONFIG() {
       return this.getAPI_CONFIG();
     },
-
-    dinamycCols () {
-        switch (this.$vuetify.breakpoint.name) {
-          case 'xs': return '12'
-          case 'sm': return '6'
-          case 'md': return '4'
-          case 'lg': return '2'
-          case 'xl': return '2'
-        }
+    dinamycCols() {
+      switch (this.$vuetify.breakpoint.name) {
+        case "xs":
+          return "12";
+        case "sm":
+          return "6";
+        case "md":
+          return "4";
+        case "lg":
+          return "2";
+        case "xl":
+          return "2";
+      }
     },
+    
   }
 };
 </script>
