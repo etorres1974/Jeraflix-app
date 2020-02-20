@@ -34,8 +34,9 @@ const state = {
 const getters = {
     getAPI_CONFIG: (state) => state.API_CONFIG,
     getMovies: (state) => state.movies,
-    getTrending: (state) => state.trending,
-    getVideoURL: (state) => state.videoURL
+    getTrending: (state) => createMovies(state.trending.results,4),
+    getVideoURL: (state) => state.videoURL,
+    
     
 }
 
@@ -104,6 +105,19 @@ const mutations = {
     setTrending: (state, trending) => state.trending = trending,
     setVideoURL: (state, videoURL) => state.videoURL = videoURL,
     pushMovies: (state, movies) => movies.forEach((movie) => state.movies.push(movie))
+}
+// Helpers
+function createMovies(moviesArray,index) {
+    var Movies = []
+    moviesArray.forEach(movie => {
+      Movies.push({
+        id: movie.id,
+        title: movie.title,
+        overview: movie.overview,
+        imgURL:`${state.API_CONFIG.images.secure_base_url}${state.API_CONFIG.images.poster_sizes[index]}${movie.poster_path}`
+      });
+    });
+    return Movies
 }
 
 export default {
