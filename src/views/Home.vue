@@ -43,19 +43,14 @@ export default {
     ...mapActions(["findUser"]),
     ...mapActions(["createUser"]),
 
+    ...mapActions(["login"]),
     ...mapActions(["showSnackBar"]),
 
-    clearForm() {
-      (this.name = ""),
-        (this.email = ""),
-        (this.pass = ""),
-        (this.register = false);
-    },
-
     async registrar() {
+      // Se register for falso, o usuário esta na tela de login 
       if (this.register == false) {
         this.register = true;
-      } else {
+      } else { // Registrando usuário
         var user = {
           name: this.name,
           email: this.email,
@@ -66,7 +61,12 @@ export default {
             this.snackbar.text = response.message;
             this.snackbar.color = response.value;
             this.showSnackBar(this.snackbar);
-        this.clearForm();
+        // Se o registro funcionar volta pra tela de login
+        if(response.value="success"){ 
+            this.register = false
+        }
+
+        
       }
     },
 
@@ -74,13 +74,20 @@ export default {
       var user = {
         //name: this.name,
         email: this.email,
-        pass: this.pass
-        //profiles: [{ name: this.name, whishlist: [] }]
+        pass: this.pass,
+        profiles: [{ name: this.name, whishlist: [] }]
       };
       var response = await this.findUser(user);
         this.snackbar.text = response.message;
         this.snackbar.color = response.value;
         this.showSnackBar(this.snackbar);
+         //Se o usuário for logado com sucesso, salva seus dados no Vuex e muda pra tela de menu
+        
+        if(response.user){
+          this.login(response.user[0])
+          this.$router.push('/Menu')
+        }
+        
     }
   }
 };

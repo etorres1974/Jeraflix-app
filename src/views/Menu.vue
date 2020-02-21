@@ -1,5 +1,7 @@
 <template>
   <div class="menu">
+  {{user}}
+  {{activeProfile}}
     <v-row>
       <v-col>
         <v-text-field
@@ -105,7 +107,11 @@ export default {
     // Search
     ...mapActions(["fetchMovies"]),
     ...mapGetters(["getMovies"]),
-
+    
+    // User
+    ...mapGetters(["getActiveProfile"]),
+    ...mapGetters(["getUser"]),
+    ...mapActions(["fetchUserById"]),
 
     async createDialog(movie) {
       await this.fetchVideoURL(movie.id);
@@ -126,6 +132,8 @@ export default {
     await this.fetchConfig();
     await this.fetchTrendingMovies();
     this.trending = this.getTrending();
+
+    this.fetchUserById(localStorage.getItem("userLoggedId"))
   },
   computed: {
     dinamycCols() {
@@ -141,6 +149,12 @@ export default {
         case "xl":
           return "2";
       }
+    },
+    user(){
+      return this.getUser()
+    },
+    activeProfile(){
+      return this.getActiveProfile()
     }
   }
 };
