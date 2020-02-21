@@ -118,15 +118,20 @@ const mutations = {
 // Helpers
 function createMovies(moviesArray,index) {
     var Movies = []
-    moviesArray.forEach(movie => {
-      Movies.push({
-        id: movie.id,
-        title: movie.title,
-        overview: movie.overview,
-        imgURL:`${state.API_CONFIG.images.secure_base_url}${state.API_CONFIG.images.poster_sizes[index]}${movie.poster_path}`
-      });
-    });
-    return Movies
+    if(moviesArray != undefined){
+        moviesArray.forEach(movie => {
+        Movies.push({
+            id: movie.id,
+            title: movie.title,
+            overview: movie.overview,
+            imgURL:`${state.API_CONFIG.images.secure_base_url}${state.API_CONFIG.images.poster_sizes[index]}${movie.poster_path}`
+        });
+        });
+        return Movies
+    }else{
+        return "Nenhum busca realizada"
+    }
+
 }
 
 export default {

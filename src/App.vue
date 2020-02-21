@@ -1,10 +1,6 @@
 <template>
   <v-app id="inspire">
-    <v-navigation-drawer
-      v-model="drawer"
-      app
-      clipped
-    >
+    <v-navigation-drawer v-model="drawer" app clipped>
       <v-list dense>
         <v-list-item link>
           <v-list-item-action>
@@ -25,60 +21,57 @@
       </v-list>
     </v-navigation-drawer>
 
-    <v-app-bar
-      app
-      clipped-left
-    >
+    <v-app-bar app clipped-left>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
       <v-toolbar-title>Application</v-toolbar-title>
     </v-app-bar>
 
     <v-content>
-      <v-container
-        class="fill-height"
-        fluid
-      >
-        <v-row
-          align="center"
-          justify="center"
-        >
-          <v-col>
-            <router-view></router-view>
-          </v-col>
-        </v-row>
+      <v-container>
+        <router-view></router-view>
       </v-container>
     </v-content>
 
     <v-footer app>
       <span>&copy; 2019</span>
     </v-footer>
+
+    <v-snackbar absolute  :color="snackbar.color" v-model="snackbar.show">
+      {{ snackbar.text}}
+      <v-btn color="white" text @click="snackbar.show = false">Fechar</v-btn>
+    </v-snackbar>
   </v-app>
 </template>
 
 <script>
-import {mapActions,mapGetters} from "vuex"
+import { mapActions, mapGetters } from "vuex";
 export default {
-  name: 'Home',
-  components: {
-    
+  name: "App",
+  components: {},
+  data() {
+    return {
+      drawer: null
+    };
   },
-  data(){
-    return{
-      drawer: null,
-    }
-  },
-  methods:{
+  methods: {
     ...mapActions(["fetchConfig"]),
     ...mapGetters(["getAPI_CONFIG"]),
+
+    // Snackbar
+    ...mapGetters(["getSnackBar"]),
+    
   },
-  created(){
-    this.$vuetify.theme.dark = true
-    this.fetchConfig()
+  created() {
+    this.$vuetify.theme.dark = true;
+    this.fetchConfig();
   },
-  computed:{
-    API_CONFIG(){
-      return this.getAPI_CONFIG()
+  computed: {
+    API_CONFIG() {
+      return this.getAPI_CONFIG();
+    },
+    snackbar(){
+      return this.getSnackBar()
     }
   }
-}
+};
 </script>

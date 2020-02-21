@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import Api from "./modules/Api"
+import Users from "./modules/Users"
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -20,10 +21,12 @@ export default new Vuex.Store({
   },
   actions: {
     showSnackBar({ commit }, SnackBar){
+      SnackBar.show = true
       commit("setSnackBar", SnackBar)
     },
   },
   modules: {
-    Api
+    Api,
+    Users
   }
 })
