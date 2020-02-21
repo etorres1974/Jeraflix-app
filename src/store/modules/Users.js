@@ -2,8 +2,8 @@ import axios from "axios"
 
 const state = {
     user:{
+        _id: "",
         name: "",
-        pass: "",
         email: "",
         profiles: [],
     },
@@ -35,17 +35,29 @@ const actions = {
     },
     async fetchUserById({ commit }, id){
         const user = await axios.get(`${process.env.VUE_APP_API_USER}/${id}`)
+        commit("log", "FetchUserByID")
         commit("log", user.data)
         commit("setUser" ,user.data)
-        commit("setActiveProfile", user.data.profiles[0])
+        commit("setActiveProfile", state.user.profiles[0])
+        
     },
+    async selectProfile({commit}, i){
+        commit("setActiveProfile", state.user.profiles[i])
+    },
+    async createProfile({commit}, name){
+        const profile = {name:name, wishlist: []}
+        await commit("createProfile", profile)
+        const response = await axios.put(`${process.env.VUE_APP_API_USER}/${state.user._id}`, profile)
+        commit("log",response)
+    }
 
 }
 
 const mutations = {
     log: (state, text) => console.log(text),
     setUser: (state, user) => state.user = user,
-    setActiveProfile: (state, profile) => state.profile = profile
+    setActiveProfile: (state, profile) => state.activeProfile = profile,
+    createProfile: (state, profile) => state.user.profiles.push(profile)
 }
 
 export default {

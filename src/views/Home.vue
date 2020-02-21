@@ -20,6 +20,9 @@
           </v-row>
         </v-container>
       </v-form>
+      <v-snackbar absolute :color="snackbar.color" v-model="snackbar.show">{{ snackbar.text}}
+        <v-btn icon @click="this.snackbar.show=false"> <v-icon> mdi-close</v-icon></v-btn>
+      </v-snackbar>
     </v-col>
   </v-row>
 </template>
@@ -34,8 +37,9 @@ export default {
       pass: "",
       register: false,
       snackbar: {
-        text: "",
-        color: ""
+        color: "primary",
+        text: "SnackText",
+        show: false
       }
     };
   },
@@ -44,13 +48,15 @@ export default {
     ...mapActions(["createUser"]),
 
     ...mapActions(["login"]),
-    ...mapActions(["showSnackBar"]),
+
+
 
     async registrar() {
-      // Se register for falso, o usuário esta na tela de login 
+      // Se register for falso, o usuário esta na tela de login
       if (this.register == false) {
         this.register = true;
-      } else { // Registrando usuário
+      } else {
+        // Registrando usuário
         var user = {
           name: this.name,
           email: this.email,
@@ -58,15 +64,10 @@ export default {
           profiles: [{ name: this.name, whishlist: [] }]
         };
         var response = await this.createUser(user);
-            this.snackbar.text = response.message;
-            this.snackbar.color = response.value;
-            this.showSnackBar(this.snackbar);
-        // Se o registro funcionar volta pra tela de login
-        if(response.value="success"){ 
-            this.register = false
+        this.showSnackBar(response.value,response.message);
+        if ((response.value == "success")) {
+          this.register = false;
         }
-
-        
       }
     },
 
@@ -78,17 +79,27 @@ export default {
         profiles: [{ name: this.name, whishlist: [] }]
       };
       var response = await this.findUser(user);
-        this.snackbar.text = response.message;
-        this.snackbar.color = response.value;
-        this.showSnackBar(this.snackbar);
-         //Se o usuário for logado com sucesso, salva seus dados no Vuex e muda pra tela de menu
-        
-        if(response.user){
-          this.login(response.user[0])
-          this.$router.push('/Menu')
-        }
-        
+      //this.snackbar.text = response.message;
+      //this.snackbar.color = response.value;
+      //this.showSnackBar(this.snackbar);
+      this.showSnackBar(response.value,response.message);
+      //Se o usuário for logado com sucesso, salva seus dados no Vuex e muda pra tela de menu
+
+      if (response.user) {
+        this.login(response.user[0]);
+        this.$router.push("/Profiles");
+      }
+    },
+
+    showSnackBar(color,text){
+      this.snackbar.color = color,
+      this.snackbar.text = text,
+      this.snackbar.show = true
     }
+    
+  },
+  computed:{
+
   }
 };
 </script>

@@ -1,6 +1,6 @@
 <template>
   <div class="menu">
-  {{user}}
+  
   {{activeProfile}}
     <v-row>
       <v-col>
@@ -111,7 +111,7 @@ export default {
     // User
     ...mapGetters(["getActiveProfile"]),
     ...mapGetters(["getUser"]),
-    ...mapActions(["fetchUserById"]),
+    
 
     async createDialog(movie) {
       await this.fetchVideoURL(movie.id);
@@ -133,7 +133,6 @@ export default {
     await this.fetchTrendingMovies();
     this.trending = this.getTrending();
 
-    this.fetchUserById(localStorage.getItem("userLoggedId"))
   },
   computed: {
     dinamycCols() {
