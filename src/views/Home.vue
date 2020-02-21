@@ -2,14 +2,49 @@
   <div class="home">
     <v-row>
       <v-col>
-        <v-text-field label="Bucar Filmes" prepend-inner-icon="mdi-magnify" filled></v-text-field>
+        <v-text-field
+          @input="searchMovie(search)"
+          v-model="search"
+          label="Bucar Filmes"
+          prepend-inner-icon="mdi-magnify"
+          filled
+        ></v-text-field>
       </v-col>
     </v-row>
-    <v-row>
+
+    <v-row v-if="!search">
       <v-col :cols="dinamycCols" v-for="movie in trending" :key="movie.id">
         <v-card>
-          <v-img max-height="500" @click="createDialog(movie)" :src="movie.imgURL"></v-img>
-          
+          <v-img
+            :lazy-src="movie.imgURL"
+            max-height="500"
+            @click="createDialog(movie)"
+            :src="movie.imgURL"
+          >
+            <template v-slot:placeholder>
+              <v-row class="fill-height ma-0" align="center" justify="center">
+                <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
+              </v-row>
+            </template>
+          </v-img>
+        </v-card>
+      </v-col>
+    </v-row>
+    <v-row v-else>
+      <v-col :cols="dinamycCols" v-for="movie in movies" :key="movie.id">
+        <v-card>
+          <v-img
+            :lazy-src="movie.imgURL"
+            max-height="500"
+            @click="createDialog(movie)"
+            :src="movie.imgURL"
+          >
+            <template v-slot:placeholder>
+              <v-row class="fill-height ma-0" align="center" justify="center">
+                <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
+              </v-row>
+            </template>
+          </v-img>
         </v-card>
       </v-col>
     </v-row>
@@ -25,14 +60,8 @@
         </v-card-title>
         <v-card-subtitle>{{dialogMovie.overview}}</v-card-subtitle>
         <v-card-text align="center">
-          <iframe
-            v-if="dialog"
-            allowfullscreen
-            :src="getVideoURL()"
-            frameborder="0"
-            width="300"
-            height="300"
-          ></iframe>
+          <h2 v-if="getVideoURL() == null">Vídeo indisponível =(</h2>
+          <iframe v-if="dialog" allowfullscreen :src="getVideoURL()" frameborder="0" height="300"></iframe>
         </v-card-text>
 
         <v-card-actions>
@@ -55,13 +84,15 @@ export default {
   components: {},
   data() {
     return {
+      search: "",
       dialog: false,
       dialogMovie: {},
+      movies: [],
       trending: []
     };
   },
   methods: {
-    // Configs 
+    // Configs
     ...mapActions(["fetchConfig"]),
     ...mapGetters(["getAPI_CONFIG"]),
     // Trending
@@ -70,11 +101,20 @@ export default {
     // Video
     ...mapActions(["fetchVideoURL"]),
     ...mapGetters(["getVideoURL"]),
-    
+
+    // Search
+    ...mapActions(["fetchMovies"]),
+    ...mapGetters(["getMovies"]),
+
     async createDialog(movie) {
       await this.fetchVideoURL(movie.id);
       this.dialogMovie = movie;
       this.dialog = true;
+    },
+
+    async searchMovie(search) {
+      await this.fetchMovies(search);
+      this.movies = this.getMovies();
     },
 
     log(e) {
@@ -84,7 +124,7 @@ export default {
   async created() {
     await this.fetchConfig();
     await this.fetchTrendingMovies();
-    this.trending = this.getTrending()
+    this.trending = this.getTrending();
   },
   computed: {
     dinamycCols() {
@@ -101,7 +141,6 @@ export default {
           return "2";
       }
     }
-
   }
 };
 </script>

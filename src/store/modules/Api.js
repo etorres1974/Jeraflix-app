@@ -33,11 +33,11 @@ const state = {
 //O mapGetter permite acessar esses getters ja salvos no Vuex
 const getters = {
     getAPI_CONFIG: (state) => state.API_CONFIG,
-    getMovies: (state) => state.movies,
+    getMovies: (state) =>  createMovies(state.movies.results,4),
     getTrending: (state) => createMovies(state.trending.results,4),
     getVideoURL: (state) => state.videoURL,
     
-    
+
 }
 
 // o mapActions solicita a Api do Backend modificações
@@ -48,11 +48,19 @@ const actions = {
         
         commit("setConfig", response.data)
     },
+
     // Busca somente a primeira página de uma busca de filmes por id usando axios
     async fetchMovies({ commit }, keyword){
-        const response = await axios.get(`/search/movie?api_key=${process.env.VUE_APP_API_KEY}&query=${keyword}`)
+        const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/search/movie?api_key=${process.env.VUE_APP_API_KEY}&query=${keyword}`)
         commit("log",response.data)
         commit("setMovies", response.data)
+    },
+
+    //Busca somente a primeira página de uma busca de filmes por id usando a lib mdb
+    async fetchMovieById({ commit }, id){
+        mdb.movieInfo({ id: id}, (err, response) => {
+            console.log(response);
+          });
     },
 
     // Busca TODAS as páginas de uma busca de filmes por id usando a lib mdb
@@ -72,25 +80,26 @@ const actions = {
         
     },
 
-    //Busca somente a primeira página de uma busca de filmes por id usando a lib mdb
-    async fetchMovieById({ commit }, id){
-        mdb.movieInfo({ id: id}, (err, response) => {
-            console.log(response);
-          });
-    },
+    
     
     // Trending movies in last 24h
     async fetchTrendingMovies({commit}){
         const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/trending/movie/day?api_key=${process.env.VUE_APP_API_KEY}`)
         commit("setTrending", response.data)
     },
+
     async fetchVideoURL({commit}, id){
         const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/movie/${id}/videos?api_key=${process.env.VUE_APP_API_KEY}`)
-        if(response.data.results[0].site == "YouTube"){
-            commit("log",`https://www.youtube.com/embed/${response.data.results[0].key}`)
-            commit("setVideoURL", `https://www.youtube.com/embed/${response.data.results[0].key}`)
+        if(response.data.results.length != 0){
+            if(response.data.results[0].site == "YouTube"){
+                commit("log",`https://www.youtube.com/embed/${response.data.results[0].key}`)
+                commit("setVideoURL", `https://www.youtube.com/embed/${response.data.results[0].key}`)
+            }else{
+                commit("log",response.data.results[0].site)
+            }
         }else{
-            commit("log",response.data.results[0].site)
+            commit("log",response.data)
+            commit("setVideoURL", null)
         }
     },
 
