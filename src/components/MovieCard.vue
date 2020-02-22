@@ -35,9 +35,10 @@
           <v-btn v-if="$route.fullPath != `/Favoritos` "  text color="grey" @click="addFavorite(movie)">
             <v-icon>mdi-heart</v-icon>Adicionar aos favoritos
           </v-btn>
-          <v-btn v-else text color="grey" @click="addFavorite(movie)">
+          <v-btn v-else text color="grey" @click="removeFavorite(movie)">
             <v-icon>mdi-heart-broken</v-icon> Remover Favoritos
           </v-btn>
+          
           <v-btn text color="grey" @click="log(movie)">
             <v-icon>mdi-share-variant</v-icon>Compartilhar
           </v-btn>
@@ -64,7 +65,8 @@ export default {
 
     //Profile
     ...mapActions(["addFavorite"]),
-
+    ...mapActions(["removeFavorite"]),
+    
     async createDialog(movie) {
       await this.fetchVideoURL(movie.id);
       this.dialog = true;

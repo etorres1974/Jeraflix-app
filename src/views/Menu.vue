@@ -2,6 +2,7 @@
   <div class="menu">
     <v-row>
       <v-col>
+        
         <v-text-field
           @input="searchMovie(search)"
           v-model="search"

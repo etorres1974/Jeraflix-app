@@ -66,7 +66,25 @@ const actions = {
             commit("log",response)
         }
         
-    }
+    },
+    async removeFavorite({commit}, movie){
+        // índice do perfil dentro do user
+        var profileIndex = state.user.profiles.findIndex(profile => profile._id === state.activeProfile._id)
+        
+        // índice do filme dentro da wishlist             
+        var movieIndex = state.user.profiles[profileIndex].wishlist.findIndex(film => film.id === movie.id )
+        
+        //Removendo filme do wishlist no banco local
+         commit("remFavorite", {profileIndex, movieIndex} )
+
+         //Alterando banco de Dados
+        var req = { profileId: state.activeProfile._id, movie: movie }
+        const response = await axios.delete(`${process.env.VUE_APP_API_USER}/favorite/${state.user._id}`, {data: req})
+        commit("log",response)   
+
+        
+    },
+    
 
 }
 
@@ -77,7 +95,8 @@ const mutations = {
     createProfile: (state, profile) => state.user.profiles.push(profile),
     setLocalStorageId: (state, id) => localStorage.setItem("userLoggedId", id),
     deleteLocalStorageId: (state) => localStorage.removeItem("userLoggedId"),
-    addFavorite: (state, movie) => state.activeProfile.wishlist.push(movie)
+    addFavorite: (state, movie) => state.activeProfile.wishlist.push(movie),
+    remFavorite: (state, obj) => state.user.profiles[obj.profileIndex].wishlist.splice(obj.movieIndex, 1)
 }
 
 export default {
