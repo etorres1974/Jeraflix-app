@@ -43,10 +43,6 @@ export default {
     };
   },
   methods: {
-    // Configs
-    ...mapActions(["fetchConfig"]),
-    ...mapGetters(["getAPI_CONFIG"]),
-
     // Trending
     ...mapActions(["fetchTrendingMovies"]),
     ...mapGetters(["getTrending"]),
@@ -69,7 +65,6 @@ export default {
     }
   },
   async created() {
-    await this.fetchConfig();
     await this.fetchTrendingMovies();
     this.trending = this.getTrending();
   },

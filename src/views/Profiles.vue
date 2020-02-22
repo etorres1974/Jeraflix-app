@@ -2,7 +2,7 @@
   <div class="menu">
     <v-row>
       <v-col align="center">
-            <h2> Quem esta Assistindo?</h2>
+            <h2> Quem está Assistindo?</h2>
             <v-row v-for="(profile,i) in profiles" :key="profile._id">
                 <v-col>
                     <v-card  @click="trocarPerfil(i)" >
@@ -13,13 +13,13 @@
             </v-row>
             
 
-            <v-form ref="form">
+            <v-form v-if="profiles.length < 4" ref="form">
                 <v-text-field label="Nome novo perfil" :rules="nameRules" v-model="perfilName" > </v-text-field>
-                <v-btn @click="addProfile()"> Adicionar Perfil <v-icon>mdi-Account</v-icon></v-btn>
+                <v-btn v-if="profiles.length < 4" @click="addProfile()"> {{profiles.length}}/4 Adicionar Perfil <v-icon>mdi-Account</v-icon></v-btn>
             </v-form>
             
+            
       </v-col>
-      
     </v-row>
   </div>
 </template>
@@ -36,18 +36,22 @@ export default {
         }
     },
     methods:{
+        //User
         ...mapGetters(["getUser"]),
         ...mapActions(["selectProfile"]),
         ...mapActions(["createProfile"]),
+
         addProfile(){
-            if(this.$refs.form.validate()){this.createProfile(this.perfilName)}
+            if(this.profiles.length < 4){
+                if(this.$refs.form.validate()){this.createProfile(this.perfilName)}
+            }
         },
         trocarPerfil(i){
             this.selectProfile(i)
             this.$router.push("/Menu")
         },
         deletarPerfil(i){
-
+            //TODO
         }
     },
     computed:{
