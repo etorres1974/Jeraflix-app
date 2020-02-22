@@ -29,6 +29,14 @@ const routes = [
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "Menu" */ '../views/Profiles.vue')
   },
+  {
+    path: '/favoritos',
+    name: 'Favoritos',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "Menu" */ '../views/Favoritos.vue')
+  },
   { path: '*', redirect: '/' }
 ]
 
@@ -37,16 +45,14 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  if(to.name != "Home"){
-    if(localStorage.getItem("userLoggedId") == null || localStorage.getItem("userLoggedId") == undefined){
+  // Está Deslogado
+  if(localStorage.getItem("userLoggedId") == null || localStorage.getItem("userLoggedId") == undefined){
+    if(to.name != "Home"){
       console.log("É necessário logar primeiro")
       next("/")
-    }else{
-      next()
     }
-  }else{
-    next()
   }
+  next()
 })
 
 export default router

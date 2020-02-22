@@ -3,36 +3,11 @@
     <v-row>
       <v-col>
          
-        <v-text-field
-          @input="searchMovie(search)"
-          v-model="search"
-          label="Bucar Filmes"
-          prepend-inner-icon="mdi-magnify"
-          filled
-        ></v-text-field>
       </v-col>
     </v-row>
 
-    <v-row v-if="!search">
-      <v-col :cols="dinamycCols" v-for="movie in trending" :key="movie.id">
-        <v-card>
-          <v-img
-            :lazy-src="movie.imgURL"
-            max-height="500"
-            @click="createDialog(movie)"
-            :src="movie.imgURL"
-          >
-            <template v-slot:placeholder>
-              <v-row class="fill-height ma-0" align="center" justify="center">
-                <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
-              </v-row>
-            </template>
-          </v-img>
-        </v-card>
-      </v-col>
-    </v-row>
-    <v-row v-else>
-      <v-col :cols="dinamycCols" v-for="movie in movies" :key="movie.id">
+    <v-row >
+      <v-col :cols="dinamycCols" v-for="movie in favoritos" :key="movie.id">
         <v-card>
           <v-img
             :lazy-src="movie.imgURL"
@@ -90,7 +65,6 @@ export default {
       dialog: false,
       dialogMovie: {},
       movies: [],
-      trending: []
     };
   },
   methods: {
@@ -111,9 +85,6 @@ export default {
     // User
     ...mapGetters(["getActiveProfile"]),
     ...mapGetters(["getUser"]),
-
-    //
-    ...mapActions(["addFavorite"]),
     
 
     async createDialog(movie) {
@@ -122,10 +93,6 @@ export default {
       this.dialog = true;
     },
 
-    async searchMovie(search) {
-      await this.fetchMovies(search);
-      this.movies = this.getMovies();
-    },
 
     log(e) {
       console.log(e);
@@ -155,8 +122,9 @@ export default {
     user(){
       return this.getUser() 
     },
-    activeProfile(){
-      return this.getActiveProfile()
+    favoritos(){
+      const { whishlist } = this.getActiveProfile()
+      return whishlist 
     }
   }
 };
