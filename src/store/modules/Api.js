@@ -95,6 +95,7 @@ const actions = {
                 commit("log",`https://www.youtube.com/embed/${response.data.results[0].key}`)
                 commit("setVideoURL", `https://www.youtube.com/embed/${response.data.results[0].key}`)
             }else{
+                commit("log","Video Não esta no youtube")
                 commit("log",response.data.results[0].site)
             }
         }else{
@@ -115,7 +116,8 @@ const mutations = {
     setVideoURL: (state, videoURL) => state.videoURL = videoURL,
     pushMovies: (state, movies) => movies.forEach((movie) => state.movies.push(movie))
 }
-// Helpers
+
+// Helper Function que formata o filme de forma mais conveniente
 function createMovies(moviesArray,index) {
     var Movies = []
     if(moviesArray != undefined){

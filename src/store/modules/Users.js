@@ -48,13 +48,13 @@ const actions = {
         commit("setActiveProfile", state.user.profiles[i])
     },
     async createProfile({commit}, name){
-        const profile = {name:name, wishlist: []}
+        const profile = { name:name, wishlist: []}
         await commit("createProfile", profile)
         const response = await axios.put(`${process.env.VUE_APP_API_USER}/${state.user._id}`, profile)
         commit("log",response)
     },
     async addFavorite({commit}, movie){
-        if(state.activeProfile.whishlist.some(film => film.id == movie.id)){
+        if(state.activeProfile.wishlist.some(film => film.id == movie.id)){
             commit("log", "Filme ja esta na lista de favoritos")
         }else{
             commit("addFavorite", movie)
@@ -77,7 +77,7 @@ const mutations = {
     createProfile: (state, profile) => state.user.profiles.push(profile),
     setLocalStorageId: (state, id) => localStorage.setItem("userLoggedId", id),
     deleteLocalStorageId: (state) => localStorage.removeItem("userLoggedId"),
-    addFavorite: (state, movie) => state.activeProfile.whishlist.push(movie)
+    addFavorite: (state, movie) => state.activeProfile.wishlist.push(movie)
 }
 
 export default {

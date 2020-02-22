@@ -5,14 +5,17 @@
         <v-container justify="center" align-content="center" style="width: 500px;">
           <v-row>
             <v-col>
-              <v-text-field v-model="name" rounded filled label="Nome" v-if="register"></v-text-field>
-              <v-text-field v-model="email" rounded filled label="Email"></v-text-field>
-              <v-text-field v-model="pass" rounded filled label="Senha"></v-text-field>
+              <v-text-field v-model="user.name" rounded filled label="Nome" v-if="register"></v-text-field>
+              <v-text-field v-model="user.email" rounded filled label="Email"></v-text-field>
+              <v-text-field v-model="user.pass" rounded filled label="Senha"></v-text-field>
 
+              <!-- Botão de logar não aparece se estiver logando -->
               <v-btn v-if="!register" @click="logar()" color="primary" rounded block>Logar</v-btn>
               <br />
+              <!-- Ativa modo Registrar-->
               <v-btn @click="registrar()" rounded block>Registrar</v-btn>
               <br />
+              <!-- Retorna o modo logar -->
               <v-btn v-if="register" @click="register = false" rounded block>
                 <v-icon>mdi-keyboard-return</v-icon>Voltar
               </v-btn>
@@ -20,8 +23,12 @@
           </v-row>
         </v-container>
       </v-form>
-      <v-snackbar absolute :color="snackbar.color" v-model="snackbar.show">{{ snackbar.text}}
-        <v-btn icon @click="this.snackbar.show=false"> <v-icon> mdi-close</v-icon></v-btn>
+      <!-- Mostrar mensagens -->
+      <v-snackbar absolute :color="snackbar.color" v-model="snackbar.show">
+        {{ snackbar.text}}
+        <v-btn icon @click="this.snackbar.show=false">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
       </v-snackbar>
     </v-col>
   </v-row>
@@ -32,10 +39,13 @@ import { mapActions, mapGetters } from "vuex";
 export default {
   data() {
     return {
-      name: "",
-      email: "",
-      pass: "",
-      register: false,
+      user: {
+        name: "",
+        email: "",
+        pass: "",
+        //profiles: [{ name: this.name, wishlist: [] }], // 
+      },
+      register: false, // Flag para trocar o formulário entre Login e Register sem trocar de página
       snackbar: {
         color: "primary",
         text: "SnackText",
@@ -46,60 +56,47 @@ export default {
   methods: {
     ...mapActions(["findUser"]),
     ...mapActions(["createUser"]),
-
     ...mapActions(["login"]),
-
-
 
     async registrar() {
       // Se register for falso, o usuário esta na tela de login
       if (this.register == false) {
         this.register = true;
       } else {
-        // Registrando usuário
-        var user = {
-          name: this.name,
-          email: this.email,
-          pass: this.pass,
-          profiles: [{ name: this.name, whishlist: [] }]
-        };
-        var response = await this.createUser(user);
-        this.showSnackBar(response.value,response.message);
-        if ((response.value == "success")) {
+        // Criando Default Profiles, o mongoose não permite usar this dentro do model, apesar de a documentação dizer o oposto
+        this.user.profiles = [{ name: this.user.name, wishlist: [] }]
+        
+        // Criando Usuário no banco de dados
+        var response = await this.createUser(this.user);
+
+        // Mostrando resultado
+        this.showSnackBar(response);
+
+        // Se o usuário for cadastrado com sucesso, retorna para tela de login
+        if (response.value == "success") {
           this.register = false;
         }
       }
     },
 
     async logar() {
-      var user = {
-        //name: this.name,
-        email: this.email,
-        pass: this.pass,
-        profiles: [{ name: this.name, whishlist: [] }]
-      };
-      var response = await this.findUser(user);
-      //this.snackbar.text = response.message;
-      //this.snackbar.color = response.value;
-      //this.showSnackBar(this.snackbar);
-      this.showSnackBar(response.value,response.message);
-      //Se o usuário for logado com sucesso, salva seus dados no Vuex e muda pra tela de menu
+      // Procurando usuário no banco
+      var response = await this.findUser(this.user);
 
+      // Mostrando resultado
+      this.showSnackBar(response);
+
+      //Se o usuário for logado com sucesso, salva seus dados no Vuex e muda pra tela de menu
       if (response.user) {
         this.login(response.user[0]);
         this.$router.push("/Profiles");
       }
     },
-
-    showSnackBar(color,text){
-      this.snackbar.color = color,
-      this.snackbar.text = text,
-      this.snackbar.show = true
+    showSnackBar(response) {
+      this.snackbar.color = response.value;
+      this.snackbar.text = response.message;
+      this.snackbar.show = true;
     }
-    
-  },
-  computed:{
-
   }
 };
 </script>

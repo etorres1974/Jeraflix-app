@@ -45,14 +45,12 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  // Está Deslogado
-  if(localStorage.getItem("userLoggedId") == null || localStorage.getItem("userLoggedId") == undefined){
-    if(to.name != "Home"){
-      console.log("É necessário logar primeiro")
-      next("/")
-    }
-  }
-  next()
+  //Se for pra alguma rota diferente da home && Sem estar Logado
+  if(to.name !== "Home" && !localStorage.getItem("userLoggedId")) 
+    next("/") // Redireciona para home
+  else
+    next() //Continua
+  
 })
 
 export default router
