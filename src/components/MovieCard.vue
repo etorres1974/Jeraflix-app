@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-card>
+    <v-card :color="color" :outlined="border">
       <v-img
         :lazy-src="movie.imgURL"
         max-height="500"
@@ -17,7 +17,7 @@
 
     <!-- Dialog que abre ao clickar-->
     <v-dialog v-model="dialog" max-width="800">
-      <v-card>
+      <v-card  >
         <v-card-title class="headline">
           {{movie.title}}
           <v-spacer></v-spacer>
@@ -38,9 +38,12 @@
           <v-btn v-else text color="grey" @click="removeFavorite(movie)">
             <v-icon>mdi-heart-broken</v-icon> Remover Favoritos
           </v-btn>
-          
-          <v-btn text color="grey" @click="log(movie)">
-            <v-icon>mdi-share-variant</v-icon>Compartilhar
+          <v-spacer></v-spacer>
+          <v-btn icon  color="grey" @click="gostar(movie)">
+            <v-icon color="success">mdi-thumb-up-outline</v-icon>
+          </v-btn>
+          <v-btn icon color="grey" @click="desgostar(movie)">
+            <v-icon color="error">mdi-thumb-down-outline</v-icon>
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -55,7 +58,8 @@ export default {
   props: ["movie"],
   data() {
     return {
-      dialog: false
+      dialog: false,
+      like: ""
     };
   },
   methods: {
@@ -66,15 +70,57 @@ export default {
     //Profile
     ...mapActions(["addFavorite"]),
     ...mapActions(["removeFavorite"]),
+
+    //Like
+    ...mapActions(["addLike"]),
+    ...mapGetters(["getLikes"]),
+
+    
     
     async createDialog(movie) {
       await this.fetchVideoURL(movie.id);
       this.dialog = true;
     },
-    
-    log(e){
-      console.log(e)
-    }
+    async gostar(movie){
+      await this.addLike({id:movie.id, like:true})
+      this.fetchLike()
+    },
+    async desgostar(movie){
+      await this.addLike({id:movie.id, like:false})
+      this.fetchLike()
+    },
+    fetchLike(){
+      // Retorna se o Movie desse cartão esta presente na lista de gostei do perfil
+      // Retorna {id:123, like:Boolean}
+      var obj = (this.getLikes().find(obj => obj.id == this.movie.id))
+      if(obj == undefined)
+        this.like = obj
+      else
+        this.like = obj.like
+    },
+  },
+  watch:{
+    getLikes:"fetchLike"
+  },
+  
+  async created(){
+    this.fetchLike()
+  },
+  computed:{
+    color(){
+      if(this.like == true)
+        return "primary"
+      if(this.like == false)
+        return "error"
+      return ""
+    },
+    border(){
+      if(this.like == undefined)
+        return false
+      else
+        return true
+    },
   }
+  
 };
 </script>

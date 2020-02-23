@@ -79,6 +79,7 @@ export default {
   created(){
     this.generate();
   },
+  //Atualiza sempre que um item é adicionado aos favoritos ou altera valor do slider
   watch:{
     favoritos:"generate",
     slider: "generate",
