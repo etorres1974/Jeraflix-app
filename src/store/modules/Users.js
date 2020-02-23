@@ -48,7 +48,7 @@ const actions = {
         commit("setActiveProfile", state.user.profiles[i])
     },
     async createProfile({commit}, name){
-        const profile = { name:name, wishlist: []}
+        const profile = { name:name, wishlist: [], likes:[]}
         await commit("createProfile", profile)
         const response = await axios.put(`${process.env.VUE_APP_API_USER}/${state.user._id}`, profile)
         commit("log",response)
