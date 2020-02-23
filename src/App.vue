@@ -67,7 +67,8 @@ export default {
       drawer: null,
       items: [
         { icon: "mdi-filmstrip", link: "/Menu", name: "Inicio" },
-        { icon: "mdi-heart", link: "/Favoritos", name: "Favoritos" }
+        { icon: "mdi-heart", link: "/Favoritos", name: "Favoritos" },
+        { icon: "mdi-diamond-stone", link: "/Recomendacoes", name: "Recomendações!" },
       ]
     };
   },

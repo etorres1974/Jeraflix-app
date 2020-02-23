@@ -35,14 +35,6 @@ export default {
     ...mapGetters(["getActiveProfile"]),
     ...mapGetters(["getUser"]),
     
-
-    async createDialog(movie) {
-      await this.fetchVideoURL(movie.id);
-      this.dialogMovie = movie;
-      this.dialog = true;
-    },
-
-
     log(e) {
       console.log(e);
     }

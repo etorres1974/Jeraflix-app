@@ -27,6 +27,8 @@ const state = {
     },
     movies:[],
     trending:[],
+    similar:[],
+    recommendations: [],
     videoURL: ""
 }
 //state.API_CONFIG.images.base_url + / + state.API_CONFIG.images.poster_sizes
@@ -35,6 +37,8 @@ const getters = {
     getAPI_CONFIG: (state) => state.API_CONFIG,
     getMovies: (state) =>  createMovies(state.movies.results,4),
     getTrending: (state) => createMovies(state.trending.results,4),
+    getSimilar: (state) => createMovies(state.similar.results,4),
+    getRecommendations: (state) => createMovies(state.recommendations.results,4),
     getVideoURL: (state) => state.videoURL,
     
 
@@ -80,8 +84,6 @@ const actions = {
         
     },
 
-    
-    
     // Trending movies in last 24h
     async fetchTrendingMovies({commit}){
         const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/trending/movie/day?api_key=${process.env.VUE_APP_API_KEY}`)
@@ -104,6 +106,18 @@ const actions = {
         }
     },
 
+    async fetchSimilarMovies({commit}, id){
+        const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/movie/${id}/similar?api_key=${process.env.VUE_APP_API_KEY}&language=en-US&page=1`)
+        commit("setSimilar", response.data)
+    },
+
+    async fetchMovieRecommendations({commit}, id){  
+        //commit("log", `${process.env.VUE_APP_API_BASE_URL}/movie/${id}/recommendations?api_key=${process.env.VUE_APP_API_KEY}&language=en-US&page=1`)                     
+        const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/movie/${id}/recommendations?api_key=${process.env.VUE_APP_API_KEY}&language=en-US&page=1`)
+        //commit("log", response)
+        commit("setRecommendations", response.data)
+    }
+
 
 }
 
@@ -113,6 +127,8 @@ const mutations = {
     setConfig: (state, config) => state.API_CONFIG = config,
     setMovies: (state, movies) => state.movies = movies,
     setTrending: (state, trending) => state.trending = trending,
+    setRecommendations: (state, recommendations) => state.recommendations = recommendations,
+    setSimilar: (state, similar) => state.similar = similar,
     setVideoURL: (state, videoURL) => state.videoURL = videoURL,
     pushMovies: (state, movies) => movies.forEach((movie) => state.movies.push(movie))
 }
