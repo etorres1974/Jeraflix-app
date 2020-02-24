@@ -2,7 +2,7 @@
   <div class="menu">
     <v-row>
       <v-col>
-         
+         <h2> Desgostei</h2>
       </v-col>
     </v-row>
     
@@ -26,41 +26,30 @@ export default {
   },
   data() {
     return {
-      search: "",
-      movies: [],
-      likes: []
+  
     };
   },
   methods: {
     // User
     ...mapGetters(["getActiveProfile"]),
-    ...mapGetters(["getUser"]),
 
-    ...mapGetters(["getLikes"]),
+    ...mapGetters(["getDislikes"]),
 
     ...mapActions(["fetchDesgosteiId"]),
     ...mapActions(["clearDesgostei"]),
 
     ...mapGetters(["getDesgostei"]),
     
-    async fetchLikes(){
-      const { likes } = await this.getActiveProfile()
-      var falseLikes = likes.filter(obj => obj.like == false)
-      console.log(falseLikes)
-      this.likes = falseLikes 
-    
-    },
+  
     async fetchMovies(){
-      this.likes.forEach(async like => {
+      this.getDislikes().forEach(async like => {
         await this.fetchDesgosteiId(like.id)
       })
     }
     
   },
   async created() {
-    this.movies = []
     await this.clearDesgostei()
-    await this.fetchLikes()
     await this.fetchMovies()
   },
   computed: {

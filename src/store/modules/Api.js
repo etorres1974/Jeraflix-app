@@ -60,15 +60,21 @@ const actions = {
         commit("log",response.data)
         commit("setMovies", response.data)
     },
+
+    //Gostei
     async fetchGosteiId({ commit }, id){
         const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/movie/${id}?api_key=${process.env.VUE_APP_API_KEY}&language=en-US`)
-        console.log(response.data)
         commit("pushGostei", response.data)
     },
     async fetchDesgosteiId({ commit }, id){
         const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/movie/${id}?api_key=${process.env.VUE_APP_API_KEY}&language=en-US`)
-        console.log(response.data)
         commit("pushDesgostei", response.data)
+    },
+    clearGostei({commit}){
+        commit("setGostei", [])
+    },
+    clearDesgostei({commit}){
+        commit("setDesgostei", [])
     },
     
     // Trending movies in last 24h
@@ -104,12 +110,7 @@ const actions = {
         //commit("log", response)
         commit("setRecommendations", response.data)
     },
-    clearGostei({commit}){
-        commit("setGostei", [])
-    },
-    clearDesgostei({commit}){
-        commit("setDesgostei", [])
-    }
+   
 
 
 }

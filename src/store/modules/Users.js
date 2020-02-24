@@ -7,14 +7,20 @@ const state = {
         email: "",
         profiles: [],
     },
-    activeProfile: {},
+    activeProfile: {
+        wishlist: [],
+        likes: [],
+        _id: "",
+        name: ""
+    },
 
 }
 
 const getters = {
     getUser: (state) => state.user,
     getActiveProfile: (state) => state.activeProfile,
-    getLikes: (state) => state.activeProfile.likes,
+    getLikes: (state) => state.activeProfile.likes.filter(obj => obj.like == true),
+    getDislikes: (state) => state.activeProfile.likes.filter(obj => obj.like == false)
     
 }
 
@@ -46,15 +52,13 @@ const actions = {
     },
     async selectProfile({commit}, _id){
         var user = state.user.profiles.find(profile => profile._id == _id)
-        commit("setGostei", [])
-        commit("setDesgostei", [])
         commit("setActiveProfile", user)
     },
     async createProfile({commit}, name){
         const profile = { name:name, wishlist: [], likes:[]}
-        await commit("createProfile", profile)
+        commit("createProfile", profile)
         const response = await axios.put(`${process.env.VUE_APP_API_USER}/${state.user._id}`, profile)
-        commit("log",response)
+        
     },
     async addFavorite({commit}, movie){
         if(state.activeProfile.wishlist.some(film => film.id == movie.id)){
@@ -87,16 +91,20 @@ const actions = {
     },
     async addLike({commit}, like){ //like = {id:movie.id, like:true}
         //Se ja existir um like para esse Filme, retorna o index, senão retorna -1
-        var index = state.activeProfile.likes.findIndex(like => like.id == like.id)
-        // Se não existir adiciona o like, se exitir substitui o valor
-        if(index < 0 )
+        var index = await  state.activeProfile.likes.findIndex(obj => obj.id == like.id)
+
+        if(index == -1 ){
+            console.log("Novo like")
             commit("pushLike", like)
-        else
+        }
+        else{
+            console.log("Editando like: ")
+            console.log(state.activeProfile.likes[index])
             commit("editLike", {index, like})
-    
-        
+        } 
         var req = { profileId: state.activeProfile._id, obj: like }
         const response = await axios.put(`${process.env.VUE_APP_API_USER}/like/${state.user._id}`, req)
+        
         
     },
     
@@ -112,8 +120,8 @@ const mutations = {
     deleteLocalStorageId: (state) => localStorage.removeItem("userLoggedId"),
     addFavorite: (state, movie) => state.activeProfile.wishlist.push(movie),
     remFavorite: (state, movieIndex) =>  state.activeProfile.wishlist.splice(movieIndex, 1),
-    pushLike: (state, obj) => state.activeProfile.likes.push(obj),
-    editLike: (state, obj) => state.activeProfile.likes[obj.index] = obj.like
+    editLike: (state, obj) => state.activeProfile.likes.splice(obj.index, 1) && state.activeProfile.likes.push(obj.like),
+    pushLike: (state, like) => state.activeProfile.likes.push(like) 
 }
 
 export default {

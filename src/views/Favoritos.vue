@@ -1,8 +1,8 @@
 <template>
   <div class="menu">
     <v-row>
-      <v-col>
-         
+      <v-col >
+         <h2> Favoritos </h2>
       </v-col>
     </v-row>
 
@@ -17,30 +17,22 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
+import { mapGetters } from "vuex";
 import MovieCard from "../components/MovieCard"
 export default {
-  name: "Menu",
+  name: "Favoritos",
   components: {
     MovieCard
   },
   data() {
     return {
-      search: "",
-      movies: [],
+      
     };
   },
   methods: {
     // User
     ...mapGetters(["getActiveProfile"]),
-    ...mapGetters(["getUser"]),
     
-    log(e) {
-      console.log(e);
-    }
-  },
-  async created() {
-
   },
   computed: {
     dinamycCols() {
@@ -57,13 +49,10 @@ export default {
           return "2";
       }
     },
-    user(){
-      return this.getUser() 
-    },
     favoritos(){
       const { wishlist } = this.getActiveProfile()
       return wishlist 
     }
-  }
+  },
 };
 </script>

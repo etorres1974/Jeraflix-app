@@ -2,7 +2,7 @@
   <div class="menu">
     <v-row>
       <v-col>
-         
+         <h2> Gostei </h2>
       </v-col>
     </v-row>
     
@@ -26,40 +26,29 @@ export default {
   },
   data() {
     return {
-      search: "",
-      movies: [],
-      likes: []
+      
     };
   },
   methods: {
     // User
     ...mapGetters(["getActiveProfile"]),
-    ...mapGetters(["getUser"]),
 
     ...mapGetters(["getLikes"]),
 
-    ...mapActions(["fetchGosteiId"]),
     ...mapActions(["clearGostei"]),
-
+    ...mapActions(["fetchGosteiId"]),
+    
     ...mapGetters(["getGostei"]),
     
-    async fetchLikes(){
-      const { likes } = await this.getActiveProfile()
-      var trueLikes = likes.filter(obj => obj.like == true)
-      this.likes = trueLikes 
-    
-    },
     async fetchMovies(){
-      this.likes.forEach(async like => {
+      this.getLikes().forEach(async like => {
         await this.fetchGosteiId(like.id)
       })
     }
     
   },
   async created() {
-    this.movies = []
     await this.clearGostei()
-    await this.fetchLikes()
     await this.fetchMovies()
   },
   computed: {
@@ -85,6 +74,7 @@ export default {
     }
     
 
-  }
+  },
+  
 };
 </script>

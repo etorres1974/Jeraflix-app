@@ -82,7 +82,7 @@ export default {
 
     //Like
     ...mapActions(["addLike"]),
-    ...mapGetters(["getLikes"]),
+
 
     async createDialog(movie) {
       await this.fetchVideoURL(movie.id);
@@ -99,7 +99,7 @@ export default {
     fetchLike(){
       // Retorna se o Movie desse cartão esta presente na lista de gostei do perfil
       // Retorna {id:123, like:Boolean}
-      var obj = (this.getLikes().find(obj => obj.id == this.movie.id))
+      var obj = (this.profile.likes.find(like => like.id == this.movie.id))
       if(obj == undefined)
         this.like = obj
       else
