@@ -41,7 +41,7 @@ export default {
     ...mapGetters(["getSimilar"]),
 
     // Likes
-    ...mapGetters(["getLikes"]),
+    ...mapGetters(["getDislikes"]),
 
     // Retorna <slider> filmes com base no filme recebido
     async mix(movie) {
@@ -71,7 +71,7 @@ export default {
         movies.forEach(movie => {
           var duplicado = this.films.some(film => film.id == movie.id);
           var favoritado = this.favoritos.some(film => film.id == movie.id)
-          var desgostei = this.likes.some(like => (like.id == movie.id && like.like == false))
+          var desgostei = this.dislikes.some(like => like.id == movie.id )
           if (!duplicado && !favoritado && !desgostei) this.films.push(movie);
         });
       });
@@ -112,8 +112,8 @@ export default {
       const { wishlist } = this.getActiveProfile();
       return wishlist;
     },
-    likes(){
-      return this.getLikes()
+    dislikes(){
+      return this.getDislikes()
     }
   }
 };
