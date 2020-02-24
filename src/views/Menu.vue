@@ -4,7 +4,7 @@
       <v-col>
         
         <v-text-field
-          @input="searchMovie(search)"
+          @keydown="searchMovie(search)"
           v-model="search"
           label="Bucar Filmes"
           prepend-inner-icon="mdi-magnify"

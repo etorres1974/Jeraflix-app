@@ -40,7 +40,7 @@
           </v-btn>
           <v-spacer></v-spacer>
           <v-btn icon  color="grey" @click="gostar(movie)">
-            <v-icon color="success">mdi-thumb-up-outline</v-icon>
+            <v-icon  color="success">mdi-thumb-up-outline</v-icon>
           </v-btn>
           <v-btn icon color="grey" @click="desgostar(movie)">
             <v-icon color="error">mdi-thumb-down-outline</v-icon>
@@ -59,10 +59,12 @@ export default {
   data() {
     return {
       dialog: false,
-      like: ""
+      like: undefined
     };
   },
   methods: {
+    ...mapGetters(["getActiveProfile"]),
+
     // Video
     ...mapActions(["fetchVideoURL"]),
     ...mapGetters(["getVideoURL"]),
@@ -75,19 +77,17 @@ export default {
     ...mapActions(["addLike"]),
     ...mapGetters(["getLikes"]),
 
-    
-    
     async createDialog(movie) {
       await this.fetchVideoURL(movie.id);
       this.dialog = true;
     },
     async gostar(movie){
       await this.addLike({id:movie.id, like:true})
-      this.fetchLike()
+      this.like = true
     },
     async desgostar(movie){
       await this.addLike({id:movie.id, like:false})
-      this.fetchLike()
+      this.like = false
     },
     fetchLike(){
       // Retorna se o Movie desse cartão esta presente na lista de gostei do perfil
@@ -99,12 +99,9 @@ export default {
         this.like = obj.like
     },
   },
-  watch:{
-    getLikes:"fetchLike"
-  },
-  
   async created(){
     this.fetchLike()
+    //Toda vez que é criado, vai até a lista de likes e verifica se ta la pra atualizar seus valores
   },
   computed:{
     color(){
@@ -120,6 +117,9 @@ export default {
       else
         return true
     },
+    profile(){
+      return this.getActiveProfile()
+    }
   }
   
 };

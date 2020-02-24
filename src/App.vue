@@ -33,8 +33,9 @@
           </v-list-item-content>
         </v-list-item>
       </v-list>
+      
     </v-navigation-drawer>
-
+    
     <v-app-bar app clipped-left>
       <!-- Se estiver na raiz, mostrar nome do projeto -->
       <v-toolbar-title v-if="$route.fullPath == `/` ">JeraFlix</v-toolbar-title>
@@ -47,7 +48,10 @@
 
     <v-content>
       <v-container>
-        <router-view></router-view>
+        
+          <router-view></router-view>
+        
+      
       </v-container>
     </v-content>
 
@@ -69,6 +73,8 @@ export default {
         { icon: "mdi-filmstrip", link: "/Menu", name: "Inicio" },
         { icon: "mdi-heart", link: "/Favoritos", name: "Favoritos" },
         { icon: "mdi-diamond-stone", link: "/Recomendacoes", name: "Recomendações!" },
+        { icon: "mdi-thumb-up", link: "/Gostei", name: "Gostei" },
+        { icon: "mdi-thumb-down", link: "/Desgostei", name: "Desgostei" },
       ]
     };
   },

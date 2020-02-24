@@ -16,15 +16,14 @@
 
 import axios from "../../plugins/axios-instance"
 
-//https://github.com/impronunciable/moviedb recomendado no FAQ da Api
-const mdb = require('moviedb')(process.env.VUE_APP_API_KEY);
-
 const state = {
     API_CONFIG: {
         images:{
             secure_base_url: "https://image.tmdb.org/t/p/"
         }
     },
+    gostei: [],
+    desgostei: [],
     movies:[],
     trending:[],
     similar:[],
@@ -40,6 +39,8 @@ const getters = {
     getSimilar: (state) => createMovies(state.similar.results,4),
     getRecommendations: (state) => createMovies(state.recommendations.results,4),
     getVideoURL: (state) => state.videoURL,
+    getGostei: (state) => createMovies(state.gostei,4),
+    getDesgostei: (state) => createMovies(state.desgostei,4),
     
 
 }
@@ -59,31 +60,17 @@ const actions = {
         commit("log",response.data)
         commit("setMovies", response.data)
     },
-
-    //Busca somente a primeira página de uma busca de filmes por id usando a lib mdb
-    async fetchMovieById({ commit }, id){
-        mdb.movieInfo({ id: id}, (err, response) => {
-            console.log(response);
-          });
+    async fetchGosteiId({ commit }, id){
+        const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/movie/${id}?api_key=${process.env.VUE_APP_API_KEY}&language=en-US`)
+        console.log(response.data)
+        commit("pushGostei", response.data)
     },
-
-    // Busca TODAS as páginas de uma busca de filmes por id usando a lib mdb
-    async searchMovies({ commit }, keyword){
-        mdb.searchMovie({ query: keyword}, (err, response) => {
-            commit("log",response.results)
-            commit("pushMovies", response.results)
-            response.page++
-            while(response.total_pages >= response.page){
-                mdb.searchMovie({ query: keyword, page:response.page}, (err, res) => {
-                    commit("log",res.results)
-                    commit("pushMovies", res.results)
-                });
-                response.page++
-            }
-          });
-        
+    async fetchDesgosteiId({ commit }, id){
+        const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/movie/${id}?api_key=${process.env.VUE_APP_API_KEY}&language=en-US`)
+        console.log(response.data)
+        commit("pushDesgostei", response.data)
     },
-
+    
     // Trending movies in last 24h
     async fetchTrendingMovies({commit}){
         const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/trending/movie/day?api_key=${process.env.VUE_APP_API_KEY}`)
@@ -116,6 +103,12 @@ const actions = {
         const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/movie/${id}/recommendations?api_key=${process.env.VUE_APP_API_KEY}&language=en-US&page=1`)
         //commit("log", response)
         commit("setRecommendations", response.data)
+    },
+    clearGostei({commit}){
+        commit("setGostei", [])
+    },
+    clearDesgostei({commit}){
+        commit("setDesgostei", [])
     }
 
 
@@ -130,10 +123,16 @@ const mutations = {
     setRecommendations: (state, recommendations) => state.recommendations = recommendations,
     setSimilar: (state, similar) => state.similar = similar,
     setVideoURL: (state, videoURL) => state.videoURL = videoURL,
-    pushMovies: (state, movies) => movies.forEach((movie) => state.movies.push(movie))
+    pushMovies: (state, movies) => movies.forEach((movie) => state.movies.push(movie)),
+    
+    pushGostei: (state, movie) => state.gostei.push(movie),
+    setGostei: (state, arr) => state.gostei = arr,
+
+    pushDesgostei: (state, movie) => state.desgostei.push(movie),
+    setDesgostei: (state, arr) => state.desgostei = arr
 }
 
-// Helper Function que formata o filme de forma mais conveniente
+// Helper Function que formata os filmes de forma mais conveniente
 function createMovies(moviesArray,index) {
     var Movies = []
     if(moviesArray != undefined){

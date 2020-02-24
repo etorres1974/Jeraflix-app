@@ -25,7 +25,7 @@ export default {
     return {
       search: "",
       films: [],
-      slider: Number,
+      slider: "3",
     };
   },
   methods: {
@@ -39,6 +39,9 @@ export default {
 
     ...mapGetters(["getRecommendations"]),
     ...mapGetters(["getSimilar"]),
+
+    // Likes
+    ...mapGetters(["getLikes"]),
 
     // Retorna <slider> filmes com base no filme recebido
     async mix(movie) {
@@ -68,7 +71,8 @@ export default {
         movies.forEach(movie => {
           var duplicado = this.films.some(film => film.id == movie.id);
           var favoritado = this.favoritos.some(film => film.id == movie.id)
-          if (!duplicado && !favoritado) this.films.push(movie);
+          var desgostei = this.likes.some(like => (like.id == movie.id && like.like == false))
+          if (!duplicado && !favoritado && !desgostei) this.films.push(movie);
         });
       });
     }
@@ -107,6 +111,9 @@ export default {
     favoritos() {
       const { wishlist } = this.getActiveProfile();
       return wishlist;
+    },
+    likes(){
+      return this.getLikes()
     }
   }
 };

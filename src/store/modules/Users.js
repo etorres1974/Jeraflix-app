@@ -44,8 +44,11 @@ const actions = {
         commit("setActiveProfile", state.user.profiles[0])
         
     },
-    async selectProfile({commit}, i){
-        commit("setActiveProfile", state.user.profiles[i])
+    async selectProfile({commit}, _id){
+        var user = state.user.profiles.find(profile => profile._id == _id)
+        commit("setGostei", [])
+        commit("setDesgostei", [])
+        commit("setActiveProfile", user)
     },
     async createProfile({commit}, name){
         const profile = { name:name, wishlist: [], likes:[]}

@@ -3,9 +3,9 @@
     <v-row>
       <v-col align="center">
             <h2> Quem está Assistindo?</h2>
-            <v-row v-for="(profile,i) in profiles" :key="profile._id">
+            <v-row v-for="profile in profiles" :key="profile._id">
                 <v-col>
-                    <v-card  @click="trocarPerfil(i)" >
+                    <v-card  @click="trocarPerfil(profile._id)" >
                         <v-card-title>{{profile.name}}   </v-card-title>
                          
                     </v-card>
@@ -46,8 +46,8 @@ export default {
                 if(this.$refs.form.validate()){this.createProfile(this.perfilName)}
             }
         },
-        trocarPerfil(i){
-            this.selectProfile(i)
+        trocarPerfil(_id){
+            this.selectProfile(_id)
             this.$router.push("/Menu")
         },
         deletarPerfil(i){
