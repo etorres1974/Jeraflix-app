@@ -1,4 +1,5 @@
-# app
+# Jeraflix
+  Disponível em: https://jeraflix-app.herokuapp.com/#/
 
 ## Project setup
 ```
