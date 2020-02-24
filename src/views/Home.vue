@@ -1,16 +1,14 @@
 <template >
-  <v-row>
-    <v-col>
+  <v-row justify="center">
+    <v-col cols="12" sm="10" md="8" lg="6" >
       <v-form ref="form">
-        <v-container justify="center" align-content="center" style="width: 500px;">
-          <v-row>
+        <v-container  >
+          <v-row >
             <v-col>
-            
-              <v-text-field :rules="nameRules" v-if="register" v-model="user.name" rounded filled label="Nome" ></v-text-field>
               <v-text-field :rules="emailRules" v-model="user.email" rounded filled label="Email"></v-text-field>
               <v-text-field :rules="passRules" v-model="user.pass" @click:append="showPass = !showPass" :type="showPass ? 'text' : 'password'" :append-icon="showPass ? 'mdi-eye' : 'mdi-eye-off'"  rounded filled label="Senha"></v-text-field>
               <v-text-field :rules="confirmRules" v-if="register" @click:append="showConfirm = !showConfirm" :type="showConfirm ? 'text' : 'password'" :append-icon="showConfirm ? 'mdi-eye' : 'mdi-eye-off'" v-model="passConfirm" rounded filled label="Confirme sua senha"></v-text-field>
-
+              <v-text-field :rules="nameRules" v-if="register" v-model="user.name" rounded filled label="Nome" ></v-text-field>
               <!-- Botão de logar não aparece se estiver logando -->
               <v-btn v-if="!register" @click="logar()" color="primary" rounded block>Logar</v-btn>
               <br />
@@ -34,6 +32,7 @@
         </v-btn>
       </v-snackbar>
     </v-col>
+    
   </v-row>
 </template>
 
@@ -124,7 +123,8 @@ export default {
         this.snackbar.text = response.message;
         this.snackbar.show = true;
       }
-  }
+  },
+
 }
 </script>
 

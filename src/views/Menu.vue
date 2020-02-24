@@ -73,7 +73,7 @@ export default {
     dinamycCols() {
       switch (this.$vuetify.breakpoint.name) {
         case "xs":
-          return "12";
+          return "6";
         case "sm":
           return "6";
         case "md":

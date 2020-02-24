@@ -48,10 +48,11 @@
 
     <v-content>
       <v-container>
-        
-          <router-view></router-view>
-        
-      
+          <v-row align="center" justify="center">
+            <v-col class="text-center">
+              <router-view></router-view>
+            </v-col>
+          </v-row>
       </v-container>
     </v-content>
 

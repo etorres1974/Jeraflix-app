@@ -16,7 +16,7 @@
     </v-card>
 
     <!-- Dialog que abre ao clickar-->
-    <v-dialog v-model="dialog" max-width="800">
+    <v-dialog max-width="800px" v-model="dialog" >
       <v-card  >
         <v-card-title class="headline">
           {{movie.title}}
@@ -26,23 +26,30 @@
           </v-btn>
         </v-card-title>
         <v-card-subtitle>{{movie.overview}}</v-card-subtitle>
-        <v-card-text align="center">
-          <h2 v-if="getVideoURL() == null">Vídeo indisponível =(</h2>
-          <iframe v-if="dialog" allowfullscreen :src="getVideoURL()" frameborder="0" height="300"></iframe>
+
+        <v-card-text  class="d-flex pa-2"  align="center">
+          <v-row>
+            <v-col>
+              <h2 v-if="getVideoURL() == null">Vídeo indisponível =(</h2>
+              <iframe  v-if="dialog" allowfullscreen :src="getVideoURL()" frameborder="0" height="300"></iframe>
+            </v-col>
+          </v-row>
         </v-card-text>
 
         <v-card-actions>
           <v-btn v-if="$route.fullPath != `/Favoritos` "  text color="grey" @click="addFavorite(movie)">
-            <v-icon>mdi-heart</v-icon>Adicionar aos favoritos
+            <v-icon>mdi-heart</v-icon>Favoritar
           </v-btn>
           <v-btn v-else text color="grey" @click="removeFavorite(movie)">
             <v-icon>mdi-heart-broken</v-icon> Remover Favoritos
           </v-btn>
+
           <v-spacer></v-spacer>
-          <v-btn icon  color="grey" @click="gostar(movie)">
+
+          <v-btn text icon  color="grey" @click="gostar(movie)">
             <v-icon  color="success">mdi-thumb-up-outline</v-icon>
           </v-btn>
-          <v-btn icon color="grey" @click="desgostar(movie)">
+          <v-btn text icon color="grey" @click="desgostar(movie)">
             <v-icon color="error">mdi-thumb-down-outline</v-icon>
           </v-btn>
         </v-card-actions>
